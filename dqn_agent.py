@@ -89,7 +89,7 @@ class Agent():
         """
         states, actions, rewards, next_states, dones, index, weightsIS = experiences_with_index
 
-        ## TODO: compute and minimize the loss
+        ## compute and minimize the loss
 
         # Get max predicted Q values (for next states) from target model
         ### Regular DQN

@@ -28,8 +28,8 @@ _**Navigation.ipynb**_: This is the python jupyter notebook file which performs 
 
 _**dqn_agent.py**_: The python code to implement the [deep Q learning (DQN)](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf). Several extensions have been done to improve the model performance:
 - **Double DQN:** Deep Q-Learning tends to overestimate action values. [Double Q-Learning](https://arxiv.org/abs/1509.06461) has been shown to work well in practice to help with this. 
-- **Prioritized Experience Replay:** Deep Q-Learning samples experience transitions uniformly from a replay memory. [Prioritized experienced replay](https://arxiv.org/abs/1511.05952) is based on the idea that the agent can learn more effectively from some transitions than from others, and the more important transitions should be sampled with higher probability.
-- **Dueling DQN:** In order to determine which states are (or are not) valuable, we have to estimate the corresponding action values for each action. However, by replacing the traditional Deep Q-Network (DQN) architecture with a [dueling architecture](https://arxiv.org/abs/1511.06581), we can assess the value of each state, without having to learn the effect of each action.
+- **Prioritized Experience Replay:** Deep Q-Learning samples experience transitions uniformly from a replay memory. 
+[Prioritized experienced replay](https://arxiv.org/abs/1511.05952) is based on the idea that the agent can learn more effectively from some transitions than from others, and the more important transitions should be sampled with higher probability.
 
 _**model.py**_: The python code to configure the neural network.
 
