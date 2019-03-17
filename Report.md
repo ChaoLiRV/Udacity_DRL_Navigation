@@ -1,55 +1,52 @@
-[//]: # (Image References)
+# Project 2: Continuous Control task
 
-[image1]: https://user-images.githubusercontent.com/10624937/42135619-d90f2f28-7d12-11e8-8823-82b970a54d7e.gif "Trained Agent"
+### Deep _Q_ Network (_DQN_)
 
-# Project 1: Navigation
+In this excise, we learn how to use [_DQN_ algorithm](http://files.davidqiu.com//research/nature14236.pdf) to solve the reinforcement learning task with high dimensional
+state space. 
+The _DQN_ utilizes the deep neural network to approximate the action-value function _Q(s,a)_ and therefore select
+the actions in a fashion that maximizes the function value. In the algorithm, a replay buffer is implemented to randomize the
+sequential experience data (_S, A, R, S'_) to remove the correlation in the observation sequence and therefore improve the model stability.
+Further, the update of the _Q_ target values are done in a periodical manner that reduces the correlations of 
+the estimate and the target _Q_ values.  
 
-![Trained Agent][image1]
+The algorithm details is seen **Algorithm 1** figure below. First it initializes an agent with **estimated local** _Q(s,a|&theta;) network_  
+and **target** _Q(s,a|&theta;') network_ and _prioritized replay buffer_. 
+Here the [prioritized experienced replay](https://arxiv.org/abs/1511.05952) is a variant of replay buffer, which makes the learning 
+process more efficient and effective by setting higher frequency for samples associated with high temporal difference (TD) error. 
+The agent selects and executes actions according to an &epsilon;-greedy policy based on estimated _Q_. 
+By excecuting the action, the reward and the new state is observed, and then these experiences are added to the prioritized replay buffer.
+Next it comes to learning the deep network model weight. Here a separate _Q_ network is maintained for the **target** _Q_ values. 
+Specifically, every update only a small percentage (_&tau;_) of the **target** network weights are updated by copying from the **estimated local** _Q_ network
+model weights. Note that, in standard _DQN_ the target _Q_ value is _R+&gamma;maxQ(S,a; &theta;')_ where the max operator uses the same
+values both to select and to evaluate an action, which makes it more likely to overestimate values. To decouple the selection from the 
+evaluation, here [Double Q-Learning](https://arxiv.org/abs/1509.06461) is implemented where the target values are 
+_R+&gamma;Q(S, argmaxQ(S,a; &theta;); &theta;')_. Note that the selection of the action in the _argmax_ is still due to
+the online local network weights **&theta**; whereas the target value evaluation is done through a separate weight set **&theta;'**.  
 
-### Introduction
+![DQN algorithm](https://github.com/ChaoLiRV/Udacity_DRL_Navigation/blob/master/dqn_algo.png)
 
-For this project, you will train an agent to navigate (and collect bananas!) in a large, square world.  
-A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana.  Thus, the goal of your agent is to collect as many yellow bananas as possible while avoiding blue bananas.  
+ ### Implementation details
+_**deep neural network:**_ It takes the state observation as input and returns the action as the output. 
+The neural network has two hidden layers with 32 and 16 nodes. 
+Both layers use _ReLU_ activation function. The output layer uses linear activation function
 
-The state space has 37 dimensions and contains the agent's velocity, along with ray-based perception of objects around agent's forward direction.  Given this information, the agent has to learn how to best select actions.  Four discrete actions are available, corresponding to:
-- **`0`** - move forward.
-- **`1`** - move backward.
-- **`2`** - turn left.
-- **`3`** - turn right.
+In the algorithm, the buffer size is set as _1e+5_ and batch sample size for training is 64. The hyperparameters for prioritized replay 
+buffer are _&alpha;=0.6, &beta;=0.4_. The &epsilon; value is set to 1 at a higher level to allow for full exploration 
+at beginning, and gradually decay to a lower level 0.01 with decay rate of 0.99 per time-step to focus more on exploitation. 
+The reward discounting factor _&gamma;=0.99_ and learning rate _1e-3_.The update parameter _&tau;_
+for the target is _1e-2_
 
-The task is episodic, and in order to solve the environment, your agent must get an average score of +13 over 100 consecutive episodes.
+### Score plot
+The environment is solved at **371** episodes. Refer to the plot below to see how the average scores evolve as a function of episodes.
 
-### Getting Started
+![score plot](https://github.com/ChaoLiRV/Udacity_DRL_Navigation/blob/master/score_plot.png)  
 
-1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
-    - Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux.zip)
-    - Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana.app.zip)
-    - Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86.zip)
-    - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86_64.zip)
-    
-    (_For Windows users_) Check out [this link](https://support.microsoft.com/en-us/help/827218/how-to-determine-whether-a-computer-is-running-a-32-bit-version-or-64) if you need help with determining if your computer is running a 32-bit version or 64-bit version of the Windows operating system.
-
-    (_For AWS_) If you'd like to train the agent on AWS (and have not [enabled a virtual screen](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md)), then please use [this link](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux_NoVis.zip) to obtain the environment.
-
-2. Place the file in the DRLND GitHub repository, in the `p1_navigation/` folder, and unzip (or decompress) the file. 
-
-### Instructions
-
-Follow the instructions in `Navigation.ipynb` to get started with training your own agent!  
-
-### (Optional) Challenge: Learning from Pixels
-
-After you have successfully completed the project, if you're looking for an additional challenge, you have come to the right place!  In the project, your agent learned from information such as its velocity, along with ray-based perception of objects around its forward direction.  A more challenging task would be to learn directly from pixels!
-
-To solve this harder task, you'll need to download a new Unity environment.  This environment is almost identical to the project environment, where the only difference is that the state is an 84 x 84 RGB image, corresponding to the agent's first-person view.  (**Note**: Udacity students should not submit a project with this new environment.)
-
-You need only select the environment that matches your operating system:
-- Linux: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/VisualBanana_Linux.zip)
-- Mac OSX: [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/VisualBanana.app.zip)
-- Windows (32-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/VisualBanana_Windows_x86.zip)
-- Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/VisualBanana_Windows_x86_64.zip)
-
-Then, place the file in the `p1_navigation/` folder in the DRLND GitHub repository, and unzip (or decompress) the file.  Next, open `Navigation_Pixels.ipynb` and follow the instructions to learn how to use the Python API to control the agent.
-
-(_For AWS_) If you'd like to train the agent on AWS, you must follow the instructions to [set up X Server](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Training-on-Amazon-Web-Service.md), and then download the environment for the **Linux** operating system above.
->>>>>>> add Banana.app and Navigation1 as PrioritizedReplayDQN
+### Future work
+- Clip the TD error term to be between -1 and 1 in order to further improve the stability of the algorithm
+- Implement Batch Normalization to process the input to improve the learning efficiency 
+- Combine the following extensions to the DQN algorithms, like what is done by [Rainbow](https://arxiv.org/abs/1710.02298)
+    - [**Dueling DQN**](https://arxiv.org/abs/1511.06581)
+    - [**multi-step bootstrap targets**](https://arxiv.org/abs/1602.01783)
+    - [**Distributional DQN**](https://arxiv.org/abs/1707.06887)
+    - [**Noisy DQN**](https://arxiv.org/abs/1707.06887)
