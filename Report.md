@@ -22,7 +22,7 @@ model weights. Note that, in standard _DQN_ the target _Q_ value is _R+&gamma;ma
 values both to select and to evaluate an action, which makes it more likely to overestimate values. To decouple the selection from the 
 evaluation, here [Double Q-Learning](https://arxiv.org/abs/1509.06461) is implemented where the target values are 
 _R+&gamma;Q(S, argmaxQ(S,a; &theta;); &theta;')_. Note that the selection of the action in the _argmax_ is still due to
-the online local network weights **&theta**; whereas the target value evaluation is done through a separate weight set **&theta;'**.  
+the online local network weights **&theta;**; whereas the target value evaluation is done through a separate weight set **&theta;'**.  
 
 ![DQN algorithm](https://github.com/ChaoLiRV/Udacity_DRL_Navigation/blob/master/dqn_algo.png)
 
@@ -31,9 +31,9 @@ _**deep neural network:**_ It takes the state observation as input and returns t
 The neural network has two hidden layers with 32 and 16 nodes. 
 Both layers use _ReLU_ activation function. The output layer uses linear activation function
 
-In the algorithm, the buffer size is set as _1e+5_ and batch sample size for training is 64. The hyperparameters for prioritized replay 
-buffer are _&alpha;=0.6, &beta;=0.4_. The &epsilon; value is set to 1 at a higher level to allow for full exploration 
-at beginning, and gradually decay to a lower level 0.01 with decay rate of 0.99 per time-step to focus more on exploitation. 
+In the algorithm, the buffer size is set as _1e+5_ and batch sample size for training is _64_. The hyperparameters for prioritized replay 
+buffer are _&alpha;=0.6, &beta;=0.4_. The &epsilon; value is set to _1.0_ at a higher level to allow for full exploration 
+at beginning, and gradually decay to a lower level _0.01_ with decay rate of _0.99_ per time-step to focus more on exploitation. 
 The reward discounting factor _&gamma;=0.99_ and learning rate _1e-3_.The update parameter _&tau;_
 for the target is _1e-2_
 
